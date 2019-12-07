@@ -1,6 +1,9 @@
 package io.namjune.springmvcplayground.controller;
 
+import io.namjune.springmvcplayground.controller.request.Person;
+import io.namjune.springmvcplayground.repository.PersonRepository;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,28 +24,20 @@ class SampleControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @Test
-    @DisplayName("hello")
-    void hello() throws Exception {
-        this.mockMvc.perform(get("/hello"))
-            .andDo(print())
-            .andExpect(content().string("hello "));
-    }
+    @Autowired
+    PersonRepository personRepository;
 
     @Test
-    @DisplayName("hello name")
-    void helloNamePath() throws Exception {
-        this.mockMvc.perform(get("/hello/nj"))
-            .andDo(print())
-            .andExpect(content().string("hello nj"));
-    }
+    @DisplayName("hello id use @Entity")
+    @Order(1)
+    void helloIdPath() throws Exception {
+        Person nj = new Person();
+        nj.setName("nj");
+        Person savedPerson = this.personRepository.save(nj);
 
-    @Test
-    @DisplayName("hello name")
-    void helloNameParam() throws Exception {
-        this.mockMvc.perform(get("/hello")
-                                 .param("name", "nj"))
+        this.mockMvc.perform(get("/hello/user")
+                                 .param("id", savedPerson.getId().toString()))
             .andDo(print())
-            .andExpect(content().string("hello nj"));
+            .andExpect(content().string("hello nj(id : 1)"));
     }
 }

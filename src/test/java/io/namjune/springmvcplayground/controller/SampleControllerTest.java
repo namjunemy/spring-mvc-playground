@@ -63,4 +63,14 @@ class SampleControllerTest {
             .andExpect(content().string(Matchers.containsString("hello mobile index")))
             .andExpect(header().exists(HttpHeaders.CACHE_CONTROL));
     }
+
+    @Test
+    @DisplayName("default message converter - string message converter")
+    void stringMessageConvert() throws Exception {
+        this.mockMvc.perform(get("/message")
+                                 .content("nj"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("nj"));
+    }
 }

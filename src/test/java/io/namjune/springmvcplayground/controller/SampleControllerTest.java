@@ -2,6 +2,7 @@ package io.namjune.springmvcplayground.controller;
 
 import io.namjune.springmvcplayground.controller.request.Person;
 import io.namjune.springmvcplayground.repository.PersonRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -39,5 +41,14 @@ class SampleControllerTest {
                                  .param("id", savedPerson.getId().toString()))
             .andDo(print())
             .andExpect(content().string("hello nj(id : 1)"));
+    }
+
+    @Test
+    @DisplayName("static resource handler test")
+    void helloStaticResource() throws Exception {
+        this.mockMvc.perform(get("/index.html"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string(Matchers.containsString("hello index")));
     }
 }

@@ -20,4 +20,9 @@ public class SampleController {
     public String message(@RequestBody String body) {
         return body;
     }
+
+    @GetMapping("/jsonMessage")
+    public Person message(@RequestBody Person person) {
+        return person;
+    }
 }

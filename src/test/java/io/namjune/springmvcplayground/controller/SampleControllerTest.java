@@ -1,5 +1,6 @@
 package io.namjune.springmvcplayground.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.namjune.springmvcplayground.controller.request.Person;
 import io.namjune.springmvcplayground.repository.PersonRepository;
 import org.hamcrest.Matchers;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,6 +32,9 @@ class SampleControllerTest {
 
     @Autowired
     PersonRepository personRepository;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Test
     @DisplayName("hello id use @Entity")
@@ -72,5 +77,20 @@ class SampleControllerTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().string("nj"));
+    }
+
+    @Test
+    @DisplayName("json message test")
+    void jsonMessageConvert() throws Exception {
+        Person nj = new Person();
+        nj.setId(1L);
+        nj.setName("nj");
+        this.mockMvc.perform(get("/jsonMessage")
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .accept(MediaType.APPLICATION_JSON)
+                                 .content(objectMapper.writeValueAsString(nj)))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(nj)));
     }
 }

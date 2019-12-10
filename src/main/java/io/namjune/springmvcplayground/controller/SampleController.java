@@ -1,6 +1,6 @@
 package io.namjune.springmvcplayground.controller;
 
-import io.namjune.springmvcplayground.controller.request.Person;
+import io.namjune.springmvcplayground.domain.Person;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +21,7 @@ public class SampleController {
         return body;
     }
 
-    @GetMapping("/jsonMessage")
+    @GetMapping("/objectMessage")
     public Person message(@RequestBody Person person) {
         return person;
     }

@@ -1,5 +1,6 @@
 package io.namjune.springmvcplayground.controller;
 
+import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItems;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -21,6 +27,34 @@ class DemoControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Test
+    void httpOptionsMethodTest() throws Exception {
+        // HTTP OPTIONS 메소드로 요청시 Headers응답에 Allow 속성으로 정의된 HTTP Method 정보를 얻을 수 있다.
+        // GET, POST는 정의한 메소드. HEAD, OPTIONS는 스프링 MVC에서 제공하는 메소드
+        this.mockMvc.perform(options("/hello"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(header().exists(HttpHeaders.ALLOW))
+            .andExpect(header().stringValues(HttpHeaders.ALLOW, hasItems(containsString("GET"),
+                                                                         containsString("POST"),
+                                                                         containsString("HEAD"),
+                                                                         containsString("OPTIONS"))));
+    }
+
+    @Test
+    void httpHeadMethodTest() throws Exception {
+        // HTTP HEAD 메소드로 요청시 응답 본문은 넘어오지 않는다.
+        this.mockMvc.perform(head("/hello"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string(Strings.EMPTY));
+
+        this.mockMvc.perform(get("/hello"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("hello"));
+    }
 
     @Test
     void helloParamTest() throws Exception {

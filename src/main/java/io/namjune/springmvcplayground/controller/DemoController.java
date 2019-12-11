@@ -1,5 +1,6 @@
 package io.namjune.springmvcplayground.controller;
 
+import io.namjune.springmvcplayground.config.GetHelloMapping;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -45,7 +46,7 @@ public class DemoController {
         return "hello";
     }
 
-    @GetMapping("/hello")
+    @GetHelloMapping
     @ResponseBody
     public String hello() {
         return "hello";

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,6 +21,37 @@ class DemoControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Test
+    void helloParamTest() throws Exception {
+        // helloParam 핸들러는 parameter name이 hacker가 아닌 경우에만 발동
+        this.mockMvc.perform(get("/helloParam")
+                                 .param("name", "hacker"))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+
+        this.mockMvc.perform(get("/helloParam")
+                                 .param("name", "namjune"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("hello namjune"));
+    }
+
+    @Test
+    void helloHeaderTest() throws Exception {
+        // 헤더에 FROM 정보가 있는 경우에만 핸들러 발동
+        this.mockMvc.perform(get("/helloHeader")
+                                 .header(HttpHeaders.AUTHORIZATION, "ADMIN"))
+            .andDo(print())
+            .andExpect(status().isNotFound());
+
+        this.mockMvc.perform(get("/helloHeader")
+                                 .header(HttpHeaders.FROM, "localhost"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("hello header"))
+            .andExpect(handler().methodName("helloHeader"));
+    }
 
     @Test
     void helloJsonToTextResponseTest() throws Exception {

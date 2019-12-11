@@ -1,12 +1,26 @@
 package io.namjune.springmvcplayground.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class DemoController {
+
+    @GetMapping(value = "/helloParam", params = "name!=hacker")
+    @ResponseBody
+    public String helloParam(@RequestParam("name") String name) {
+        return "hello " + name;
+    }
+
+    @GetMapping(value = "/helloHeader", headers = HttpHeaders.FROM)
+    @ResponseBody
+    public String helloHeader() {
+        return "hello header";
+    }
 
     @GetMapping(
         value = "/helloJsonToTextResponse",

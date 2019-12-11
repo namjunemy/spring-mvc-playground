@@ -12,4 +12,10 @@ public class DemoController {
     public String hello() {
         return "hello";
     }
+
+    @GetMapping({"/hello/?", "/hello/*", "/hello/**"})
+    @ResponseBody
+    public String helloUri() {
+        return "hello uri";
+    }
 }

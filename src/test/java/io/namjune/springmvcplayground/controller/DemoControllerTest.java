@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,6 +20,47 @@ class DemoControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Test
+    void helloJsonToTextResponseTest() throws Exception {
+        // 요청 - 응답으로 JSON 요청 하지만 JSON 응답을 만드는 핸들러가 존재하지 않음. 406 Not Acceptable
+        this.mockMvc.perform(get("/helloJsonToTextResponse")
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .accept(MediaType.APPLICATION_JSON))   // PLAIN_TEXT 만 핸들링
+            .andDo(print())
+            .andExpect(status().isNotAcceptable());
+
+
+        this.mockMvc.perform(get("/helloJsonToTextResponse")
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .accept(MediaType.TEXT_PLAIN))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("hello json text response"));
+
+        // accept-header 제거 -> 요청 아무거나 받을거야. & 응답 text 줄거야. 매치 OK
+        this.mockMvc.perform(get("/helloJsonToTextResponse")
+                                 .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("hello json text response"));
+    }
+
+    @Test
+    void helloJsonTest() throws Exception {
+        // 컨텐츠 타입 XML을 consume 할 핸들러가 존재하지 않음. 415 Unsupported MediaType
+        this.mockMvc.perform(get("/helloJson")
+                                 .contentType(MediaType.APPLICATION_XML))
+            .andDo(print())
+            .andExpect(status().isUnsupportedMediaType());
+
+        this.mockMvc.perform(get("/helloJson")
+                                 .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("hello json"));
+
+    }
 
     @Test
     void helloUriTest() throws Exception {

@@ -1,7 +1,7 @@
 plugins {
-  id 'org.springframework.boot' version '2.2.1.RELEASE'
-  id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-  id 'java'
+    id 'org.springframework.boot' version '2.2.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
 }
 
 group = 'io.namjune'
@@ -9,31 +9,41 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 configurations {
-  compileOnly {
-    extendsFrom annotationProcessor
-  }
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-  mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-  compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
-  compile group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.1'
-  compile group: 'org.springframework', name: 'spring-oxm', version: '5.2.1.RELEASE'
+    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    compile group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.1'
+    compile group: 'org.springframework', name: 'spring-oxm', version: '5.2.1.RELEASE'
 
-  implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-  implementation 'org.springframework.boot:spring-boot-starter-web'
-  compileOnly 'org.projectlombok:lombok'
-  annotationProcessor 'org.projectlombok:lombok'
-  compile 'com.h2database:h2'
-  testImplementation('org.springframework.boot:spring-boot-starter-test') {
-    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-  }
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    compile 'com.h2database:h2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 }
 
 test {
-  useJUnitPlatform()
+    useJUnitPlatform()
+
+    //http://blog.hkwon.me/gradle-test-task-logging/
+    //https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.logging.TestLogging.html
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+        showCauses = true
+        showExceptions = true
+        showStackTraces = true
+        exceptionFormat = 'full'
+    }
 }
